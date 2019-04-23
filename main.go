@@ -33,29 +33,39 @@ func main() {
 		}
 		pw := []rune(string(input))
 
-		diff := -1
-		for i, r := range pw {
-			if i >= len(password) || r != password[i] {
-				diff = i
-				break
-			}
-		}
-		if diff == -1 && len(pw) < len(password) {
-			diff = len(pw)
-		}
-
-		if diff == -1 {
+		tip := hint(password, pw)
+		if tip == "" {
 			fmt.Println("passwords match")
-			continue
+		} else {
+			fmt.Printf("difference near ...%s...\n", tip)
 		}
-		var delta []rune
-		if diff-1 > 0 {
-			delta = append(delta, password[diff-1])
-		}
-		delta = append(delta, password[diff])
-		if diff+1 < len(password) {
-			delta = append(delta, password[diff+1])
-		}
-		fmt.Printf("difference near ...%s...\n", string(delta))
 	}
+}
+
+// hint computes a hint how the entered input password differs from the correct
+// password. If both slices are the same an empty string is returned.
+func hint(password, input []rune) string {
+	diff := -1
+	for i, r := range input {
+		if i >= len(password) || r != password[i] {
+			diff = i
+			break
+		}
+	}
+	if diff == -1 && len(input) == len(password) {
+		return ""
+	}
+	if diff == -1 && len(input) < len(password) {
+		diff = len(input)
+	}
+
+	var delta []rune
+	if diff-1 >= 0 {
+		delta = append(delta, password[diff-1])
+	}
+	delta = append(delta, password[diff])
+	if diff+1 < len(password) {
+		delta = append(delta, password[diff+1])
+	}
+	return string(delta)
 }
