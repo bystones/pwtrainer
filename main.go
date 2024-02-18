@@ -31,13 +31,11 @@ func main() {
 		if len(input) == 0 {
 			return
 		}
-		pw := []rune(string(input))
 
-		tip := hint(password, pw)
-		if tip == "" {
-			fmt.Println("passwords match")
+		if tip := hint(password, []rune(string(input))); tip == "" {
+			fmt.Println("Passwords match.")
 		} else {
-			fmt.Printf("difference near ...%s...\n", tip)
+			fmt.Printf("Difference near ...%s...\n", tip)
 		}
 	}
 }
