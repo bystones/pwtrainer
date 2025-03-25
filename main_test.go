@@ -39,6 +39,11 @@ var tests = []struct {
 		input:    "fooaar",
 		tip:      "oba",
 	},
+	{
+		password: "foobär",
+		input:    "fooöar",
+		tip:      "obä",
+	},
 }
 
 func TestHint(t *testing.T) {
