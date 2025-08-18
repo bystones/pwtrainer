@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"slices"
 	"syscall"
 
 	"golang.org/x/crypto/ssh/terminal"
@@ -35,7 +36,7 @@ func main() {
 		if tip := hint(password, []rune(string(input))); tip == "" {
 			fmt.Println("Passwords match.")
 		} else {
-			fmt.Printf("Difference near ...%s...\n", tip)
+			fmt.Printf("Difference near %s\n", tip)
 		}
 	}
 }
@@ -43,27 +44,37 @@ func main() {
 // hint computes a hint how the entered input password differs from the correct
 // password. If both slices are the same an empty string is returned.
 func hint(password, input []rune) string {
-	diff := -1
-	for i, r := range input {
-		if i >= len(password) || r != password[i] {
-			diff = i
+	if slices.Equal(password, input) {
+		return ""
+	}
+
+	length := min(len(password), len(input))
+	var diff int
+	for diff = range length {
+		if input[diff] != password[diff] {
 			break
 		}
 	}
-	if diff == -1 && len(input) == len(password) {
-		return ""
-	}
-	if diff == -1 && len(input) < len(password) {
-		diff = len(input)
+	if diff == length {
+		diff--
 	}
 
-	var delta []rune
-	if diff-1 >= 0 {
-		delta = append(delta, password[diff-1])
+	atIndex := func(i int) string {
+		if i < 0 || i >= len(password) {
+			return ""
+		}
+		return string(password[i])
 	}
-	delta = append(delta, password[diff])
-	if diff+1 < len(password) {
-		delta = append(delta, password[diff+1])
+	hasIndex := func(i int) bool {
+		return i >= 0 && i < len(password)
 	}
-	return string(delta)
+
+	delta := atIndex(diff-1) + atIndex(diff) + atIndex(diff+1)
+	if hasIndex(diff - 2) {
+		delta = "." + delta
+	}
+	if hasIndex(diff + 2) {
+		delta = delta + "."
+	}
+	return delta
 }
