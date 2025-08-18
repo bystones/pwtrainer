@@ -7,7 +7,7 @@ import (
 	"slices"
 	"syscall"
 
-	"golang.org/x/crypto/ssh/terminal"
+	"golang.org/x/term"
 )
 
 func fatalf(format string, args ...any) {
@@ -17,7 +17,7 @@ func fatalf(format string, args ...any) {
 
 func main() {
 	fmt.Println("Enter the correct password:")
-	input, err := terminal.ReadPassword(int(syscall.Stdin))
+	input, err := term.ReadPassword(int(syscall.Stdin))
 	if err != nil {
 		fatalf("failed to read input: %v", err)
 	}
@@ -25,7 +25,7 @@ func main() {
 
 	for {
 		fmt.Println("Enter the password (or nothing to stop):")
-		input, err := terminal.ReadPassword(int(syscall.Stdin))
+		input, err := term.ReadPassword(int(syscall.Stdin))
 		if err != nil {
 			fatalf("failed to read input: %v", err)
 		}
